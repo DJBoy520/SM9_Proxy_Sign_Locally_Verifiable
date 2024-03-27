@@ -63,7 +63,6 @@ def verify_aggregate(master_public, identity, msgs, signature):
         # hs.append(h)
 
     coefficients = calculate_coefficient_with_modulus(hs, ec.curve_order)
-
     T = Ws[0] ** coefficients[0]
     C = coefficients[1::][::-1]
     for i in tqdm(range(len(C)), desc="generate t_i"):
