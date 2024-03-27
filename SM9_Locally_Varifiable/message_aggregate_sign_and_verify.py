@@ -21,9 +21,8 @@ def sign_aggregate(master_public, Da, msgs):
     r_1 = rand_gen.randrange(ec.curve_order)
     Ws = []
 
-    for i in range(len(msgs)):
+    for i in range(len(msgs) + 1):
         w = g ** ((r_0 ** i) % ec.curve_order)
-        # w = ec.multiply(Ppub, (r_0 ** (i + 1)) % ec.curve_order)
         Ws.append(w)
 
     z = g ** r_1
@@ -60,14 +59,15 @@ def verify_aggregate(master_public, identity, msgs, signature):
         msg_hash = sm3_hash(str2hexbytes(msgs[i]))
         x = (msg_hash + fe2sp(Ws[i])).encode('utf-8')
         h = h2rf(2, x, ec.curve_order)
-        hs.append(h)
+        hs.append(fq.prime_field_inv(h, ec.curve_order))
+        # hs.append(h)
 
     coefficients = calculate_coefficient_with_modulus(hs, ec.curve_order)
 
-    T = g ** coefficients[0]
+    T = Ws[0] ** coefficients[0]
     C = coefficients[1::][::-1]
     for i in tqdm(range(len(C)), desc="generate t_i"):
-        t = Ws[i] ** coefficients[i]
+        t = Ws[i + 1] ** C[i]
         T = T * t
 
     V = g ** h_agg
@@ -116,5 +116,5 @@ if __name__ == '__main__':
     execution_time_ms = (end_time - start_time) * 1000
     print(f"验证签名执行时间: {execution_time_ms:.2f} 毫秒")
 
-    print("success")
+    print(resu)
     pass
