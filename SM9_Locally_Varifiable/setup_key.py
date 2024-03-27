@@ -41,8 +41,8 @@ def private_key_extract(scheme, master_public, master_secret, identity):
     m = master_secret + m
     if (m % ec.curve_order) == 0:
         return FAILURE
-    # m = master_secret * fq.prime_field_inv(m, ec.curve_order)  # 求逆元
-    m = fq.prime_field_inv(master_secret, ec.curve_order) * m  # 求逆元
+    m = master_secret * fq.prime_field_inv(m, ec.curve_order)  # 求逆元
+    # m = fq.prime_field_inv(master_secret, ec.curve_order) * m  # 求逆元
 
     if (scheme == 'sign'):
         Da = ec.multiply(P1, m)
