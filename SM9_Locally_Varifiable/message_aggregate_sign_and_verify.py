@@ -19,8 +19,8 @@ def sign_aggregate(master_public, Da, msgs):
     rand_gen = SystemRandom()
     r_0 = rand_gen.randrange(ec.curve_order)
     r_1 = rand_gen.randrange(ec.curve_order)
-    Ws = []
 
+    Ws = []
     for i in range(len(msgs) + 1):
         w = g ** ((r_0 ** i) % ec.curve_order)
         Ws.append(w)
@@ -33,11 +33,11 @@ def sign_aggregate(master_public, Da, msgs):
         msg_hash = sm3_hash(str2hexbytes(msgs[i]))
         x = (msg_hash + fe2sp(Ws[i])).encode('utf-8')
         h = h2rf(2, x, ec.curve_order)
-        hs.append(h)
+        hs.append(fq.prime_field_inv(h, ec.curve_order))
 
     l_agg = 1
     for i in tqdm(range(len(hs)), desc="generate ls"):
-        l = (r_0 - hs[i]) % ec.curve_order
+        l = (r_0 + hs[i]) % ec.curve_order
         l_agg = (l_agg * l) % ec.curve_order
 
     S_agg = ec.multiply(Da, (r_1 - l_agg - h_agg) % ec.curve_order)
