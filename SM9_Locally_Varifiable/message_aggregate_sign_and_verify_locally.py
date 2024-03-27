@@ -80,9 +80,10 @@ def verify_aggregate_locally(master_public, identity, msg, signature):
     import gmssl.optimized_pairing as ate
 
     (S_agg, h_agg, aux1, aux2, w_j) = signature
-    P1 = master_public[0]
+    # P1 = master_public[0]
     P2 = master_public[1]
     Ppub = master_public[2]
+    g = master_public[3]
 
     msg_hash = sm3_hash(str2hexbytes(msg))
     x = (msg_hash + fe2sp(w_j)).encode('utf-8')
@@ -91,10 +92,6 @@ def verify_aggregate_locally(master_public, identity, msg, signature):
 
     T = (aux1 ** h) * aux2
     V = g ** h_agg
-
-    # msg_hash = sm3_hash(str2hexbytes(msg))
-    # z = msg_hash.encode('utf-8')
-    # h = h2rf(2, z, ec.curve_order)
 
     user_id = sm3_hash(str2hexbytes(identity))
     h1 = h2rf(1, (user_id + '01').encode('utf-8'), ec.curve_order)
@@ -133,7 +130,7 @@ if __name__ == '__main__':
     signature = sign_aggregate_locally(master_public, Da, cartesian_product, 2)
 
     start_time = time.time()
-    resu = verify_aggregate_locally(master_public, idA, cartesian_product[5], signature)
+    resu = verify_aggregate_locally(master_public, idA, cartesian_product[2], signature)
     end_time = time.time()
 
     execution_time_ms = (end_time - start_time) * 1000
