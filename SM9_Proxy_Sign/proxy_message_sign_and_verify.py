@@ -1,8 +1,11 @@
+from tqdm import tqdm
+
 from SM9_Proxy_Sign.proxy_authorization import proxy_private_key_extract, setup
+from gmssl import sm9
 from gmssl.sm3 import sm3_hash
 from random import SystemRandom
 import gmssl.optimized_curve as ec
-from gmssl.sm9 import fe2sp, public_key_extract
+from gmssl.sm9 import fe2sp, public_key_extract, private_key_extract
 from util.util import str2hexbytes, h2rf
 import gmssl.optimized_pairing as ate
 import gmssl.optimized_field_elements as fq
@@ -81,25 +84,45 @@ def verify(master_public, msg, signature, identity_original, identity_proxy, aut
 if __name__ == '__main__':
     import time
 
+    num = 100
     idA = 'a'
     idC = 'c'
     auth_info = "a->c"
+    message = 'abc'
 
-    print("-----------------test sign and verify---------------")
+    print("-----------------test proxy sign and verify---------------")
 
     master_public, master_secret = setup('sign')
 
-    Da = proxy_private_key_extract('sign', master_public, master_secret, idA, idC, auth_info)
+    Da = sm9.private_key_extract('sign', master_public, master_secret, idA)
 
-    message = 'abc'
-    signature = sign(master_public, Da, message)
+    start_time_sign = time.time()
+    for i in tqdm(range(num), desc="sm9 generate auth_info"):
+        signature_auth = sm9.sign(master_public, Da, auth_info)
+    end_time_sign = time.time()
+    execution_time_ms = (end_time_sign - start_time_sign) * 1000
+    print(f"sm9 generate auth_info执行时间: {execution_time_ms:.2f} 毫秒")
 
     start_time = time.time()
-    resu = verify(master_public, message, signature, idA, idC, auth_info)
+    for i in tqdm(range(num), desc="proxy_private_key_extract"):
+        Dac = proxy_private_key_extract('sign', master_public, master_secret, signature_auth, idA, idC, auth_info)
     end_time = time.time()
-
     execution_time_ms = (end_time - start_time) * 1000
-    print(f"验证签名执行时间: {execution_time_ms:.2f} 毫秒")
+    print(f"proxy_private_key_extract (100) 执行时间: {execution_time_ms:.2f} 毫秒")
+
+    start_time = time.time()
+    for i in tqdm(range(num), desc="proxy sign"):
+        signature = sign(master_public, Dac, message)
+    end_time = time.time()
+    execution_time_ms = (end_time - start_time) * 1000
+    print(f"proxy sign (100) 执行时间: {execution_time_ms:.2f} 毫秒")
+
+    start_time = time.time()
+    for i in tqdm(range(num), desc="proxy verify"):
+        resu = verify(master_public, message, signature, idA, idC, auth_info)
+    end_time = time.time()
+    execution_time_ms = (end_time - start_time) * 1000
+    print(f"proxy verify(100)执行时间: {execution_time_ms:.2f} 毫秒")
 
     print(resu)
     pass

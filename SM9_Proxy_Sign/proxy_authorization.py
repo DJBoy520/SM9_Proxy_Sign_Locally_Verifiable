@@ -1,3 +1,4 @@
+from gmssl import sm9
 from gmssl.sm3 import sm3_kdf, sm3_hash
 
 from random import SystemRandom
@@ -32,10 +33,14 @@ def setup(scheme):
     return (master_public_key, s)
 
 
-def proxy_private_key_extract(scheme, master_public, master_secret, identity_original, identity_proxy,
+def proxy_private_key_extract(scheme, master_public, master_secret, signature_auth, identity_original, identity_proxy,
                               authorization_information):
     P1 = master_public[0]
     P2 = master_public[1]
+
+    result = sm9.verify(master_public, identity_original, authorization_information, signature_auth)
+    if not result:
+        raise Exception('Invalid authorization_information')
 
     user_id_original = sm3_hash(str2hexbytes(identity_original))
     user_id_proxy = sm3_hash(str2hexbytes(identity_proxy))
