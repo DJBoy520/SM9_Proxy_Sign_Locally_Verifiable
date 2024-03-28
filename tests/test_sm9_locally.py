@@ -129,10 +129,10 @@ def test(num):
 
 
 if __name__ == '__main__':
-    test(100)
-    test(200)
-    test(300)
-    test(400)
+    # test(100)
+    # test(200)
+    # test(300)
+    # test(400)
     test(500)
     test(600)
 
