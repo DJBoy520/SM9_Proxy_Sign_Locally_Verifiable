@@ -32,17 +32,23 @@ def setup(scheme):
     return (master_public_key, s)
 
 
-def proxy_private_key_extract(scheme, master_public, master_secret, identity):
+def proxy_private_key_extract(scheme, master_public, master_secret, identity_original, identity_proxy,
+                              authorization_information):
     P1 = master_public[0]
     P2 = master_public[1]
 
-    user_id = sm3_hash(str2hexbytes(identity))
-    m = h2rf(1, (user_id + '01').encode('utf-8'), ec.curve_order)
-    m = master_secret + m
+    user_id_original = sm3_hash(str2hexbytes(identity_original))
+    user_id_proxy = sm3_hash(str2hexbytes(identity_proxy))
+    hash_authorization = sm3_hash(str2hexbytes(authorization_information))
+
+    m_1 = h2rf(1, (user_id_original + '01').encode('utf-8'), ec.curve_order)
+    m_2 = h2rf(1, (user_id_proxy + '01').encode('utf-8'), ec.curve_order)
+    m_3 = h2rf(1, (hash_authorization + '01').encode('utf-8'), ec.curve_order)
+    m = (master_secret * m_1 + m_2 * m_3) % ec.curve_order
+
     if (m % ec.curve_order) == 0:
         return FAILURE
     m = master_secret * fq.prime_field_inv(m, ec.curve_order)  # 求逆元
-    # m = fq.prime_field_inv(master_secret, ec.curve_order) * m  # 求逆元
 
     if (scheme == 'sign'):
         Da = ec.multiply(P1, m)

@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Remote Python 3.11.2 (sftp://dj@192.168.30.244:222/home/dj/WorkSpaces/SM9_Proxy_Sign_Locally_Verifiable/myvenv/bin/python)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.11.2 (sftp://dj@192.168.30.244:222/home/dj/WorkSpaces/SM9_Proxy_Sign_Locally_Verifiable/myvenv/bin/python)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Remote Python 3.11.2 (sftp://dj@192.168.30.244:222/home/dj/WorkSpaces/SM9_Proxy_Sign_Locally_Verifiable/myvenv/bin/python3)" project-jdk-type="Python SDK" />
 </project>

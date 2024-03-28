@@ -52,7 +52,7 @@ def verify(master_public, identity, msg, signature):
 
 
 if __name__ == '__main__':
-    from setup_key import setup, private_key_extract
+    from SM9_Proxy_Sign.setup_key import setup, private_key_extract
     import time
 
     idA = 'a'
