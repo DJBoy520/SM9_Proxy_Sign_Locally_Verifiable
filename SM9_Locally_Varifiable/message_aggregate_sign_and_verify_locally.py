@@ -64,12 +64,14 @@ def sign_aggregate_locally(master_public, Da, msgs, index_mj):
 
     aux1 = Ws[0] ** coefficients_without_mj[0]
     C = coefficients_without_mj[1::][::-1]
-    for i in tqdm(range(len(C)), desc="generate aux1"):
+    # for i in tqdm(range(len(C)), desc="generate aux1"):
+    for i in range(len(C)):
         t = Ws[i + 1] ** C[i]
         aux1 = aux1 * t
 
     aux2 = Ws[1] ** coefficients_without_mj[0]
-    for i in tqdm(range(len(C)), desc="generate aux2"):
+    # for i in tqdm(range(len(C)), desc="generate aux2"):
+    for i in range(len(C)):
         t = Ws[i + 2] ** C[i]
         aux2 = aux2 * t
 

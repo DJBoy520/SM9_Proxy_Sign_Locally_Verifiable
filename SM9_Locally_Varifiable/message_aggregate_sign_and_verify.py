@@ -36,7 +36,8 @@ def sign_aggregate(master_public, Da, msgs):
         hs.append(fq.prime_field_inv(h, ec.curve_order))
 
     l_agg = 1
-    for i in tqdm(range(len(hs)), desc="generate ls"):
+    # for i in tqdm(range(len(hs)), desc="generate ls"):
+    for i in range(len(hs)), desc="generate ls"):
         l = (r_0 + hs[i]) % ec.curve_order
         l_agg = (l_agg * l) % ec.curve_order
 
@@ -65,7 +66,8 @@ def verify_aggregate(master_public, identity, msgs, signature):
     coefficients = calculate_coefficient_with_modulus(hs, ec.curve_order)
     T = Ws[0] ** coefficients[0]
     C = coefficients[1::][::-1]
-    for i in tqdm(range(len(C)), desc="generate t_i"):
+    # for i in tqdm(range(len(C)), desc="generate t_i"):
+    for i in range(len(C)):
         t = Ws[i + 1] ** C[i]
         T = T * t
 
